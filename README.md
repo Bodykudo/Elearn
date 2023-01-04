@@ -1,9 +1,10 @@
-# What is Elearn ?
+
+# ![Elearn Icon](https://i.imgur.com/ogo6iS0.png) What is Elearn ?
 
 #### **Elearn** is a learning management system that allows admin users to track and manage their own educatioanl systems effieciently and with ease.
 
 #### Our application provides an easy way to access your students and Staffs easily and with no effort.
-
+![Elearn Splash Scren](https://raw.githubusercontent.com/Bodykudo/Elearn/main/LMS/img/splash.png)
 ---
 
 ### Our Application will provide the user with a handful of features:
@@ -39,12 +40,11 @@
 - Pie and bar charts that demonstrates statistical data.
 - Statistics of course grades. (eg. Average grade and pass ratio)
 
+![Elearn Screen](https://i.imgur.com/kCvsZip.png)
 ---
 
 ### Why choose us ?
 
-##### Our user interface provides an easy to use enivronment for any user. The interface explains itself making the use of a helping tool unnecessary. This is very rare in some applications making our application superior in some cases. Not only that but the user interace has very pleasant color combinations giving the whole application a premium look.
-
-##### Our application make sure to validate most of the data entered to it. This will result in optimaly lower erorrs when inputing data by the admin users. Which is the most prominent problem in most Learning Management Systems. Howerver, Elearn handles that perfectly making it very reliable to use without being error-prone.
-
+##### Our user interface provides an easy to use environment for any user. The interface explains itself making the use of a helping tool unnecessary. This is very rare in some applications making our application superior in some cases. Not only that but the user interface has very pleasant color combinations giving the whole application a premium look.
+##### Our application make sure to validate most of the data entered to it. This will result in happening of less errors when entering data by the admins. Which is the most prominent problem in most Learning Management Systems. However, Elearn handles that perfectly making it very reliable to use without being error-prone.
 ##### Our Program uses QT framework to generate a seamless and responsive application by integrating our C++ code with the user interface. We have provided some documentation on our Class lists and heirarchy and documentation on their methods.
