@@ -124,6 +124,12 @@ private:
     // Table setttings changer
     void changeTableSettings(QTableWidget* table);
 
+    // Display profiles
+    void displayCourse(int courseID);
+    void displayStaff(int staffID);
+    void displayStudent(int studentID);
+    void displayAdmin(int adminID);
+
     // CSV functions
     void importCSV();
     void exportCSV();

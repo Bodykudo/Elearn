@@ -145,7 +145,7 @@ background-color:rgba(2, 65, 118, 200);
          </font>
         </property>
         <property name="cursor">
-         <cursorShape>ForbiddenCursor</cursorShape>
+         <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="styleSheet">
          <string notr="true">

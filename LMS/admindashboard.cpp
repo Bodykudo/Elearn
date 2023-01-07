@@ -862,6 +862,166 @@ void AdminDashBoard::showCharts() {
     }
 }
 
+/// Display profile methods
+
+// Display course informations
+void AdminDashBoard::displayCourse(int courseID) {
+    ui->tabs->setCurrentIndex(0);
+    QString courseName = QString::fromStdString(courses[courseID]->getCourseName());
+    QCoreApplication::setApplicationName("ELearn. - " + courseName);
+    setWindowTitle(QCoreApplication::applicationName());
+
+    // Set the labels values to the course informations
+    ui->courseNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight:700;\">" + courseName +  "</span></p><br></body></html>");
+    ui->courseCodeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(courseID) + "</span></p></body></html>");
+    QString day = QString::fromStdString(days[courses[courseID]->getLectureDay()]);
+    QString time = QString::fromStdString(times[courses[courseID]->getLectureTime()]);
+    ui->courseDayValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + day + "</span></p></body></html>");
+    ui->courseTimeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + time + "</span></p></body></html>");
+    ui->courseGradeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(courses[courseID]->getCourseGrade()) + "</span></p></body></html>");
+    ui->averageGrade->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(courses[courseID]->averageGrade) + "/" + QString::number(courses[courseID]->getCourseGrade()) + "</span></p></body></html>");
+    ui->ratioValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(courses[courseID]->passRatio) + "%</span></p></body></html>");
+    ui->courseHallValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(courses[courseID]->getLectureHall()) + "</span></p></body></html>");
+    ui->courseDepartValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:12pt;\">" + QString::fromStdString(courses[courseID]->getCourseDepartment()).toUpper() + "</span></p></body></html>");
+
+    // Fill the course students table
+    ui->couseStudentsTable->setRowCount(0);
+    for (auto &p : courses[courseID]->students) {
+        if (p.first == 0)
+            continue;
+        int courseGrade = p.second;
+        int rowCount = ui->couseStudentsTable->rowCount();
+        ui->couseStudentsTable->setRowCount(rowCount + 1);
+        QTableWidgetItem *items [] = {
+            new QTableWidgetItem(QString::fromStdString(students[p.first]->getFirstName() + " " + students[p.first]->getLastName())),
+            new QTableWidgetItem(QString::number(courseGrade))
+        };
+        const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
+        for (size_t column = 0; column < count; column++) {
+            items[column]->setTextAlignment(Qt::AlignCenter);
+            ui->couseStudentsTable->setItem(rowCount, column, items[column]);
+        }
+    }
+
+    // Fill the course staff table
+    ui->courseStaffTable->setRowCount(0);
+    for (auto &p : courses[courseID]->staff) {
+        if (p == 0)
+            continue;
+        int rowCount = ui->courseStaffTable->rowCount();
+        ui->courseStaffTable->setRowCount(rowCount + 1);
+        QTableWidgetItem *items [] = {
+            new QTableWidgetItem(QString::fromStdString(staffList[p]->getFirstName() + " " + staffList[p]->getLastName())),
+            new QTableWidgetItem(QString::fromStdString(positions[staffList[p]->getPosition()]))
+        };
+        const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
+        for (size_t column = 0; column < count; column++) {
+            items[column]->setTextAlignment(Qt::AlignCenter);
+            ui->courseStaffTable->setItem(rowCount, column, items[column]);
+        }
+    }
+}
+
+// Display staff informations
+void AdminDashBoard::displayStaff(int staffID) {
+    ui->tabs->setCurrentIndex(2);
+    QString name = QString::fromStdString(staffList[staffID]->getFirstName() + " " + staffList[staffID]->getLastName());
+    QCoreApplication::setApplicationName("ELearn. - " + name);
+    setWindowTitle(QCoreApplication::applicationName());
+
+    // Set the labels values to the staff informations
+    ui->staffNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight:700;\">" + name +  "</span></p><br></body></html>");
+    ui->staffEmailValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(staffList[staffID]->getEmail()) + "</span></p></body></html>");
+    ui->staffPhoneValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(staffList[staffID]->getMobile()) + "</span></p></body></html>");
+    ui->staffGenderValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(staffList[staffID]->getGender()) + "</span></p></body></html>");
+    ui->staffAgeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(staffList[staffID]->getAge()) + "</span></p></body></html>");
+    ui->staffDepartValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:12pt;\">" + QString::fromStdString(departments[staffList[staffID]->getDepartment()]) + "</span></p></body></html>");
+    ui->staffIDValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(staffID) + "</span></p></body></html>");
+    ui->staffPositionValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(positions[staffList[staffID]->getPosition()]) + "</span></p></body></html>");
+
+    // Fill the staff courses table
+    ui->staffCoursesTable->setRowCount(0);
+    for (auto const &p : staffList[staffID]->getCourses()) {
+        if (p == 0)
+            continue;
+        int courseID = p;
+        Course* course = courses[courseID];
+        int rowCount = ui->staffCoursesTable->rowCount();
+        ui->staffCoursesTable->setRowCount(rowCount + 1);
+        QTableWidgetItem *items [] = {
+            new QTableWidgetItem(QString::number(course->getCourseID())),
+            new QTableWidgetItem(QString::fromStdString(course->getCourseName())),
+        };
+        const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
+        for (size_t column = 0; column < count; column++) {
+            items[column]->setTextAlignment(Qt::AlignCenter);
+            ui->staffCoursesTable->setItem(rowCount, column, items[column]);
+        }
+    }
+}
+
+// Display students informations
+void AdminDashBoard::displayStudent(int studentID) {
+    ui->tabs->setCurrentIndex(4);
+    QString name = QString::fromStdString(students[studentID]->getFirstName() + " " + students[studentID]->getLastName());
+    QCoreApplication::setApplicationName("ELearn. - " + name);
+    setWindowTitle(QCoreApplication::applicationName());
+
+    // Set the labels values to the student informations
+    ui->studentNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight:700;\">" + name +  "</span></p><br></body></html>");
+    ui->studentEmailValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(students[studentID]->getEmail()) + "</span></p></body></html>");
+    ui->studentPhoneValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(students[studentID]->getMobile()) + "</span></p></body></html>");
+    ui->studentGenderValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(students[studentID]->getGender()) + "</span></p></body></html>");
+    ui->studentAgeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(students[studentID]->getAge()) + "</span></p></body></html>");
+    ui->studentDepartValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:12pt;\">" + QString::fromStdString(departments[students[studentID]->getDepartment()]) + "</span></p></body></html>");
+    ui->studentGradeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(years[students[studentID]->getGrade()] + " year </span></p></body></html>"));
+    ui->studentsIDValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(studentID) + "</span></p></body></html>");
+
+    // Fill the student courses table
+    ui->studentCoursesTable->setRowCount(0);
+    for (auto const &p : students[studentID]->getCourses()) {
+        if (p.first == 0)
+            continue;
+        int courseID = p.first;
+        int courseGrade = p.second;
+        Course* course = courses[courseID];
+        int rowCount = ui->studentCoursesTable->rowCount();
+        ui->studentCoursesTable->setRowCount(rowCount + 1);
+        QTableWidgetItem *items [] = {
+            new QTableWidgetItem(QString::number(course->getCourseID())),
+            new QTableWidgetItem(QString::fromStdString(course->getCourseName())),
+            new QTableWidgetItem(QString::number(courseGrade))
+        };
+        const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
+        for (size_t column = 0; column < count; column++) {
+            items[column]->setTextAlignment(Qt::AlignCenter);
+            ui->studentCoursesTable->setItem(rowCount, column, items[column]);
+        }
+    }
+}
+
+// Display admin informations
+void AdminDashBoard::displayAdmin(int adminID) {
+    ui->tabs->setCurrentIndex(8);
+    QString name = QString::fromStdString(admins[adminID]->getFirstName() + " " + admins[adminID]->getLastName());
+    QCoreApplication::setApplicationName("ELearn. - " + name);
+    setWindowTitle(QCoreApplication::applicationName());
+
+    // Set the labels values to the admin informations
+    ui->adminNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight: 400;\">" + name +  "</span></p></body></html>");
+    ui->adminEmailValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[adminID]->getEmail()) + "</span></p></body></html>");
+    ui->adminPhoneValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[adminID]->getMobile()) + "</span></p></body></html>");
+    ui->adminGenderValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[adminID]->getGender()) + "</span></p></body></html>");
+    ui->adminAgeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(admins[adminID]->getAge()) + "</span></p></body></html>");
+    ui->adminUsernameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[adminID]->getUsername()) + "</span></p></body></html>");
+
+    // Make edit availalbe only for the current admin profile
+    if (adminID == currentAdmin)
+        ui->adminEdit->show();
+    else
+        ui->adminEdit->hide();
+}
+
 // Displaying informations in right menu
 void AdminDashBoard::on_table_cellClicked(int row){
     // Save the id of the selected item
@@ -869,175 +1029,20 @@ void AdminDashBoard::on_table_cellClicked(int row){
     int id = ID.toInt();
     currentID = id;
     if (mode == "courses") {
-        // Display course informations
-        ui->tabs->setCurrentIndex(0);
-        QString courseName = QString::fromStdString(courses[id]->getCourseName());
-        QCoreApplication::setApplicationName("ELearn. - " + courseName);
-        setWindowTitle(QCoreApplication::applicationName());
-
-        // Set the labels values to the course informations
-        ui->courseNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight:700;\">" + courseName +  "</span></p><br></body></html>");
-        ui->courseCodeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + ID + "</span></p></body></html>");
-        QString day = QString::fromStdString(days[courses[id]->getLectureDay()]);
-        QString time = QString::fromStdString(times[courses[id]->getLectureTime()]);
-        ui->courseDayValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + day + "</span></p></body></html>");
-        ui->courseTimeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + time + "</span></p></body></html>");
-        ui->courseGradeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(courses[id]->getCourseGrade()) + "</span></p></body></html>");
-        ui->averageGrade->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(courses[id]->averageGrade) + "/" + QString::number(courses[id]->getCourseGrade()) + "</span></p></body></html>");
-        ui->ratioValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(courses[id]->passRatio) + "%</span></p></body></html>");
-        ui->courseHallValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(courses[id]->getLectureHall()) + "</span></p></body></html>");
-        ui->courseDepartValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:12pt;\">" + QString::fromStdString(courses[id]->getCourseDepartment()).toUpper() + "</span></p></body></html>");
-
-        // Fill the course students table
-        ui->couseStudentsTable->setRowCount(0);
-        for (auto &p : courses[id]->students) {
-            if (p.first == 0)
-                continue;
-            int courseGrade = p.second;
-            int rowCount = ui->couseStudentsTable->rowCount();
-            ui->couseStudentsTable->setRowCount(rowCount + 1);
-            QTableWidgetItem *items [] = {
-                new QTableWidgetItem(QString::fromStdString(students[p.first]->getFirstName() + " " + students[p.first]->getLastName())),
-                new QTableWidgetItem(QString::number(courseGrade))
-            };
-            const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
-            for (size_t column = 0; column < count; column++) {
-                items[column]->setTextAlignment(Qt::AlignCenter);
-                ui->couseStudentsTable->setItem(rowCount, column, items[column]);
-            }
-        }
-
-        // Fill the course staff table
-        ui->courseStaffTable->setRowCount(0);
-        for (auto &p : courses[id]->staff) {
-            if (p == 0)
-                continue;
-            int rowCount = ui->courseStaffTable->rowCount();
-            ui->courseStaffTable->setRowCount(rowCount + 1);
-            QTableWidgetItem *items [] = {
-                new QTableWidgetItem(QString::fromStdString(staffList[p]->getFirstName() + " " + staffList[p]->getLastName())),
-                new QTableWidgetItem(QString::fromStdString(positions[staffList[p]->getPosition()]))
-            };
-            const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
-            for (size_t column = 0; column < count; column++) {
-                items[column]->setTextAlignment(Qt::AlignCenter);
-                ui->courseStaffTable->setItem(rowCount, column, items[column]);
-            }
-        }
-
+        displayCourse(id);
     } else if (mode == "staff") {
-        // Display staff informations
-        ui->tabs->setCurrentIndex(2);
-        QString name = QString::fromStdString(staffList[id]->getFirstName() + " " + staffList[id]->getLastName());
-        QCoreApplication::setApplicationName("ELearn. - " + name);
-        setWindowTitle(QCoreApplication::applicationName());
-
-        // Set the labels values to the staff informations
-        ui->staffNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight:700;\">" + name +  "</span></p><br></body></html>");
-        ui->staffEmailValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(staffList[id]->getEmail()) + "</span></p></body></html>");
-        ui->staffPhoneValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(staffList[id]->getMobile()) + "</span></p></body></html>");
-        ui->staffGenderValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(staffList[id]->getGender()) + "</span></p></body></html>");
-        ui->staffAgeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(staffList[id]->getAge()) + "</span></p></body></html>");
-        ui->staffDepartValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:12pt;\">" + QString::fromStdString(departments[staffList[id]->getDepartment()]) + "</span></p></body></html>");
-        ui->staffIDValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + ID + "</span></p></body></html>");
-        ui->staffPositionValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(positions[staffList[id]->getPosition()]) + "</span></p></body></html>");
-
-        // Fill the staff courses table
-        ui->staffCoursesTable->setRowCount(0);
-        for (auto const &p : staffList[id]->getCourses()) {
-            if (p == 0)
-                continue;
-            int courseID = p;
-            Course* course = courses[courseID];
-            int rowCount = ui->staffCoursesTable->rowCount();
-            ui->staffCoursesTable->setRowCount(rowCount + 1);
-            QTableWidgetItem *items [] = {
-                new QTableWidgetItem(QString::number(course->getCourseID())),
-                new QTableWidgetItem(QString::fromStdString(course->getCourseName())),
-            };
-            const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
-            for (size_t column = 0; column < count; column++) {
-                items[column]->setTextAlignment(Qt::AlignCenter);
-                ui->staffCoursesTable->setItem(rowCount, column, items[column]);
-            }
-        }
+        displayStaff(id);
     }
     else if (mode == "students") {
-        // Display students informations
-        ui->tabs->setCurrentIndex(4);
-        QString name = QString::fromStdString(students[id]->getFirstName() + " " + students[id]->getLastName());
-        QCoreApplication::setApplicationName("ELearn. - " + name);
-        setWindowTitle(QCoreApplication::applicationName());
-
-        // Set the labels values to the student informations
-        ui->studentNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight:700;\">" + name +  "</span></p><br></body></html>");
-        ui->studentEmailValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(students[id]->getEmail()) + "</span></p></body></html>");
-        ui->studentPhoneValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(students[id]->getMobile()) + "</span></p></body></html>");
-        ui->studentGenderValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(students[id]->getGender()) + "</span></p></body></html>");
-        ui->studentAgeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(students[id]->getAge()) + "</span></p></body></html>");
-        ui->studentDepartValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:12pt;\">" + QString::fromStdString(departments[students[id]->getDepartment()]) + "</span></p></body></html>");
-        ui->studentGradeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(years[students[id]->getGrade()] + " year </span></p></body></html>"));
-        ui->studentsIDValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + ID + "</span></p></body></html>");
-
-        // Fill the student courses table
-        ui->studentCoursesTable->setRowCount(0);
-        for (auto const &p : students[id]->getCourses()) {
-            if (p.first == 0)
-                continue;
-            int courseID = p.first;
-            int courseGrade = p.second;
-            Course* course = courses[courseID];
-            int rowCount = ui->studentCoursesTable->rowCount();
-            ui->studentCoursesTable->setRowCount(rowCount + 1);
-            QTableWidgetItem *items [] = {
-                new QTableWidgetItem(QString::number(course->getCourseID())),
-                new QTableWidgetItem(QString::fromStdString(course->getCourseName())),
-                new QTableWidgetItem(QString::number(courseGrade))
-            };
-            const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
-            for (size_t column = 0; column < count; column++) {
-                items[column]->setTextAlignment(Qt::AlignCenter);
-                ui->studentCoursesTable->setItem(rowCount, column, items[column]);
-            }
-        }
+        displayStudent(id);
     } else {
-        // Display admin informations
-        ui->tabs->setCurrentIndex(8);
-        QString name = QString::fromStdString(admins[id]->getFirstName() + " " + admins[id]->getLastName());
-        QCoreApplication::setApplicationName("ELearn. - " + name);
-        setWindowTitle(QCoreApplication::applicationName());
-
-        // Set the labels values to the admin informations
-        ui->adminNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight: 400;\">" + name +  "</span></p></body></html>");
-        ui->adminEmailValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[id]->getEmail()) + "</span></p></body></html>");
-        ui->adminPhoneValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[id]->getMobile()) + "</span></p></body></html>");
-        ui->adminGenderValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[id]->getGender()) + "</span></p></body></html>");
-        ui->adminAgeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(admins[id]->getAge()) + "</span></p></body></html>");
-        ui->adminUsernameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[id]->getUsername()) + "</span></p></body></html>");
-
-        // Make edit availalbe only for the current admin profile
-        if (id == currentAdmin)
-            ui->adminEdit->show();
-        else
-            ui->adminEdit->hide();
+        displayAdmin(id);
     }
 }
 
 // Open current admin profile
 void AdminDashBoard::on_adminAvatar_clicked() {
-    ui->tabs->setCurrentIndex(8);
-    QString name = QString::fromStdString(admins[currentAdmin]->getFirstName() + " " + admins[currentAdmin]->getLastName());
-    QCoreApplication::setApplicationName("ELearn. - " + name);
-    setWindowTitle(QCoreApplication::applicationName());
-
-    ui->adminNameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt; font-weight: 400;\">" + name +  "</span></p></body></html>");
-    ui->adminEmailValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[currentAdmin]->getEmail()) + "</span></p></body></html>");
-    ui->adminPhoneValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[currentAdmin]->getMobile()) + "</span></p></body></html>");
-    ui->adminGenderValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[currentAdmin]->getGender()) + "</span></p></body></html>");
-    ui->adminAgeValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::number(admins[currentAdmin]->getAge()) + "</span></p></body></html>");
-    ui->adminUsernameValue->setText("<html><head/><body><p align=\"center\"><span style=\"font-size:14pt;\">" + QString::fromStdString(admins[currentAdmin]->getUsername()) + "</span></p></body></html>");
-
-    ui->adminEdit->show();
+    displayAdmin(currentAdmin);
 }
 
 // Main body add button
@@ -1821,7 +1826,7 @@ void AdminDashBoard::removeStudent() {
 
     // Add the removing action to the admins log
     QString firstName = QString::fromStdString(students[id]->getFirstName());
-    QString lastName = QString::fromStdString(students[id]->getFirstName());
+    QString lastName = QString::fromStdString(students[id]->getLastName());
     QString dateTime = "[" + QDateTime::currentDateTime().toString("dd/MM/yyyy-hh:mm:ss") + "] ";
     ui->logList->addItem(dateTime + QString::fromStdString(admins[currentAdmin]->getUsername()) + " removed student: " + firstName + " " + lastName + ".");
 

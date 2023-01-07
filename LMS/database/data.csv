@@ -1,7 +1,6 @@
 3201,3101,3001,3102,3002,17200,19200,1125,1313,20106,19301,
 ************************************************************************
 DepartmentCode,DepartmentName
-,,
 cmp,Computer Engineering,
 cve,Civil Engineering,
 elc,Communication and Electronics Engineering,
@@ -16,17 +15,15 @@ adminID,adminFirstName,adminLastName,adminEmail,adminPhone,adminGender,adminAge,
 4,Mohamed,Moustafa,mo@mo.com,+201543454543,Male,24,HACK,admin123
 ************************************************************************
 courseID,courseName,lectureDay,lectureTime,lectureHall,courseGrade,courseDepartment,[courseStudent],[courseStaff]
-10,Data Structure,3,2,3201,125,cmp,2000-110-2001-100-2002-120-2003-65-2004-95-,300-301-
-11,Maths,5,0,20106,100,elc,2000-44-2004-89-2007-73-2008-60-2009-43-,302-303-307-
-12, Measurements,0,0,17200,100,sbe,2000-30-2001-47-2002-73-2003-85-2008-90-2009-95-,302-304-
+10,Data Structure,3,2,3201,125,cmp,2000-110-2001-100-2003-65-,300-301-
+11,Maths,5,0,20106,100,elc,2000-44-2007-73-2008-60-2009-43-,302-303-307-
+12, Measurements,0,0,17200,100,sbe,2000-30-2001-47-2003-85-2008-90-2009-95-,302-304-
 13,Anatomy,3,2,3101,100,sbe,2005-89-2006-93-2007-94-2008-77-,305-
 ************************************************************************
 studentID,studentFirstName,studentLastName,studentEmail,studentPhone,studentGender,studentAge,studentYear,studentDepartment,[studentCourses]
 2000,Abdallah,Magdy,ams@gm.com,+201200326662,Male,20,2,sbe,10-110-11-44-12-30-
 2001,Omar,Emad,oe@g.com,+201235343453,Male,19,3,cmp,10-100-12-47-
-2002,Omar,Atef,oah@g.com,+201523434234,Male,17,0,,10-120-12-73-
 2003,Ziad,Ahmed,z@gmail.com,+201156453534,Male,18,2,mec,10-65-12-85-
-2004,Omar,Nabil,ona@elearn.net,+201054583948,Male,24,4,epe,10-95-11-89-
 2005,Abdelrahman,Emad,ae@ae.com,+201120453839,Male,18,2,sbe,13-89-
 2006,Sara,Ahmed,sa@g.com,+201243453432,Female,17,0,,13-93-
 2007,Salma,Ahmed,sal@g.com,+201534343434,Female,21,2,sbe,11-73-13-94-
